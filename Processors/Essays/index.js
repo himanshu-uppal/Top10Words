@@ -10,8 +10,8 @@ import * as cheerio from 'cheerio';
 
 // Create a new Bottleneck instance
 const limiter = new Bottleneck({
-    maxConcurrent: 5, // Number of concurrent API calls
-    minTime: 100      // Minimum time between requests (in milliseconds)
+    maxConcurrent: 10, // Number of concurrent API calls
+    minTime: 50      // Minimum time between requests (in milliseconds)
 });
 const wordBank = new Set();
 
@@ -87,10 +87,10 @@ export const getTop10WordsFromEssays = async (fileName) => {
 
                         countWords(validWords, wordsCountMap);
                     }
-                } else if (response.status == 'rejected' && response.reason && (![404, 500].includes(response.reason.status) && !['ERR_BAD_REQUEST', 'ERR_INVALID_URL'].includes(response.reason.code))) {
+                } else if (response.status == 'rejected' && response.reason && (!response.reason.code && response.reason.message && response.reason.message.contains('999'))) {
                     //can be too many requests
-                    // return { errorMessage: "Too many requests" };
-                    console.log('Error');
+                    return { errorMessage: "Too many requests" };
+                    // console.log('Error');
                 }
             }
         }
